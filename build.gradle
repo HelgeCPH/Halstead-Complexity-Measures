@@ -30,6 +30,7 @@ task execute(type:JavaExec) {
 
 task halFatJar(type: OneJar) {
     mainClass = 'Main'
+    archiveName = 'hal.jar'
 }
 
 test {

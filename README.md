@@ -48,7 +48,7 @@ gradle build
 
 To execute the program from command line:
 ```
-find $(pwd)/test_datasets/pfaat/ -type f -name "*.java" | gradle execute
+$ find $(pwd)/test_datasets/pfaat -type f -name "*.java" | gradle execute
 ```
 
 The program reads paths for files for which the Halstead complexity measures for from STDIN. The 8 metrics for the Healsted complexity measures are returned in CSV style. That is, one can forward them in a CSV file directly.
@@ -64,7 +64,8 @@ $ gradle halFatJar
 The resulting standalone Jar can be used as in the follwing:
 
 ```bash
-$ find $(pwd)/test_datasets/pfaat/ -type f -name "*.java" | java -Done-jar.silent=true -jar build/libs/Halstead-Complexity-Measures-standalone.jar
+$ find $(pwd)/test_datasets/pfaat/ -type f -name "*.java" | \
+    java -Done-jar.silent=true -jar build/libs/hal.jar
 ```
 
 

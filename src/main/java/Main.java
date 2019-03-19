@@ -4,7 +4,7 @@
 
 /**
  * @author Ahmed Metwally
- *
+ * @author HelgeCPH
  */
 
 import java.io.BufferedReader;
@@ -34,28 +34,27 @@ public class Main {
 
 		// Check for compilationUnits problems in the provided file
 		IProblem[] problems = cu.getProblems();
-		for(IProblem problem : problems) {
+		for (IProblem problem : problems) {
 			// Ignore some error because of the different versions.
-            if (problem.getID() == 1610613332) 		 // 1610613332 = Syntax error, annotations are only available if source level is 5.0
+            if (problem.getID() == 1610613332)  // 1610613332 = Syntax error, annotations are only available if source level is 5.0
                 continue;
             else if (problem.getID() == 1610613329) // 1610613329 = Syntax error, parameterized types are only available if source level is 5.0
                 continue;
             else if (problem.getID() == 1610613328) // 1610613328 = Syntax error, 'for each' statements are only available if source level is 5.0
                 continue;
-            else
-            {
-            	// quit compilation if
-    	        System.out.println("CompilationUnit problem Message " + problem.getMessage() + " \t At line= "+problem.getSourceLineNumber() + "\t Problem ID="+ problem.getID());
+            else {
+            	// // quit compilation if
+    	        // System.out.println("CompilationUnit problem Message " + problem.getMessage() + " \t At line= "+problem.getSourceLineNumber() + "\t Problem ID="+ problem.getID());
 
-    	        System.out.println("The program will quit now!");
-    	        System.exit(1);
+    	        // System.out.println("The program will quit now!");
+    	        // System.exit(1);
+				return null;
             }
 	    }
 
 		// visit nodes of the constructed AST
-		ASTVisitorMod visitor= new ASTVisitorMod();
+		ASTVisitorMod visitor = new ASTVisitorMod();
 		cu.accept(visitor);
-
 	    return visitor;
 	}
 
@@ -75,8 +74,8 @@ public class Main {
 	}
 
 	// cli test:
-	// cat test_files.txt | gradle execute
-
+	// find $(pwd)/test_datasets/pfaat/ -type f -name "*.java" > test_files.txt
+	// cat test_files.txt | java -Done-jar.silent=true -jar build/libs/Halstead-Complexity-Measures-standalone.jar
 	public static void main(String[] args) throws IOException {
 
 		ASTVisitorMod astVisitor;
@@ -96,29 +95,31 @@ public class Main {
 			// collectStatsFromCode(fileContents)
 
 			astVisitor = parse(fileContents);
-			distinctOperators += astVisitor.oprt.size();
-			distinctOperands += astVisitor.names.size();
+			String csvLine;
+			if (astVisitor != null) {
+				distinctOperators += astVisitor.oprt.size();
+				distinctOperands += astVisitor.names.size();
+				for (int f : astVisitor.oprt.values()) {
+					operatorCount += f;
+				}
+				for (int f : astVisitor.names.values()) {
+					operandCount += f;
+				}
 
-			for (int f : astVisitor.oprt.values()) {
-				operatorCount += f;
+				HalsteadMetrics hal = new HalsteadMetrics(distinctOperators,
+											distinctOperands, operatorCount,
+											operandCount);
+
+				csvLine = line + "," + astVisitor.oprt.size() + ","
+						  + astVisitor.names.size() + "," + operatorCount
+						  + "," + operandCount + "," + hal.getVocabulary()
+						  + "," + hal.getProglen() + "," + hal.getCalcProgLen()
+						  + "," + hal.getVolume() + "," + hal.getDifficulty()
+						  + "," + hal.getEffort() + "," + hal.getTimeReqProg()
+						  + "," + hal.getTimeDelBugs();
+			} else {
+				csvLine = line + ",,,,,,,,,,,,";
 			}
-
-			for (int f : astVisitor.names.values()) {
-				operandCount += f;
-			}
-
-			HalsteadMetrics hal = new HalsteadMetrics(distinctOperators,
-										 distinctOperands, operatorCount,
-										 operandCount);
-
-			String csvLine = line + "," + astVisitor.oprt.size() + ","
-							 + astVisitor.names.size() + "," + operatorCount
-							 + "," + operandCount + "," + hal.getVocabulary()
-							 + "," + hal.getProglen() + ","
-							 + hal.getCalcProgLen() + "," + hal.getVolume()
-							 + "," + hal.getDifficulty() + ","
-							 + hal.getEffort() + "," + hal.getTimeReqProg()
-							 + "," + hal.getTimeDelBugs();
 			System.out.println(csvLine);
 		}
 	}
