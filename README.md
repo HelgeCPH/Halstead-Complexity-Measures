@@ -1,26 +1,26 @@
 # Calculate Halstead Complexity Measures
 
-This project is intended to calculate the Halstead complexity measures using the ASTParser. Halstead Complexity measures are software metrics introduced by Maurice Howard Halstead in 1977. These metrics are computed statically, without program execution. More information can be found on the wikipedia page: (https://en.wikipedia.org/wiki/Halstead_complexity_measures).
+This project is intended to calculate the Halstead complexity measures using the `ASTParser`. Halstead Complexity measures are software metrics introduced by Maurice Howard Halstead in 1977. These metrics are computed statically, without program execution. More information can be found on the wikipedia page: (https://en.wikipedia.org/wiki/Halstead_complexity_measures).
 
 
-## Calculation 
+## Calculation
 First, we need to compute the following numbers, given the program source code:
 
-**n1** = the number of distinct operators  
-**n2** = the number of distinct operands  
-**N1** = the total number of operators  
-**N2** = the total number of operands  
+**n1** = the number of distinct operators
+**n2** = the number of distinct operands
+**N1** = the total number of operators
+**N2** = the total number of operands
 
-From these numbers, eight measures can be calculated:  
+From these numbers, eight measures can be calculated:
 
-**Program vocabulary:** n = n1 + n2  
-**Program length:** N = N1 + N2  
-**Calculated program length:** N'=n1*log2(n1)+n2*log2(n2)  
-**Volume:** V= N*log2(n)    
-**Difficulty:** D=  (n1/2)  * (N2/n2)    
-**Effort:** E= D*V  
-**Time required to program:** T= E/18 seconds  
-**Number of delivered bugs:** B=V/3000  
+**Program vocabulary:** n = n1 + n2
+**Program length:** N = N1 + N2
+**Calculated program length:** N'=n1*log2(n1)+n2*log2(n2)
+**Volume:** V= N*log2(n)
+**Difficulty:** D=  (n1/2)  * (N2/n2)
+**Effort:** E= D*V
+**Time required to program:** T= E/18 seconds
+**Number of delivered bugs:** B=V/3000
 
 
 
@@ -35,11 +35,12 @@ From these numbers, eight measures can be calculated:
 
 Clone the project to your local repository:
 ```
-git clone https://github.com/aametwally/Halstead-Complexity-Measures.git
+$ git clone https://github.com/HelgeCPH/Halstead-Complexity-Measures.git
+$ cd
 ```
 
 
-Navigate to the project's main directory, then build the project using gradle 
+Navigate to the project's main directory, then build the project using gradle
 ```
 gradle build
 ```
@@ -47,9 +48,25 @@ gradle build
 
 To execute the program from command line:
 ```
-gradle execute
+find $(pwd)/test_datasets/pfaat/ -type f -name "*.java" | gradle execute
 ```
-Then the program should ask you to enter the directory absolute path that you wish to calculate the halstead complexity measures for. Once you provide a valid directory absolute path, the program should return the 8 metrics of healsted complexity measures. 
+
+The program reads paths for files for which the Halstead complexity measures for from STDIN. The 8 metrics for the Healsted complexity measures are returned in CSV style. That is, one can forward them in a CSV file directly.
+
+
+To build a standalone Jar run the following:
+
+
+```bash
+$ gradle halFatJar
+```
+
+The resulting standalone Jar can be used as in the follwing:
+
+```bash
+$ find $(pwd)/test_datasets/pfaat/ -type f -name "*.java" | java -Done-jar.silent=true -jar build/libs/Halstead-Complexity-Measures-standalone.jar
+```
+
 
 
 
@@ -71,7 +88,7 @@ Execute the CalcHalsteadMetrics program by:
 build execute
 ```
 
-Then provide the program with the absolute path of the unzipped PFAAT directory 
+Then provide the program with the absolute path of the unzipped PFAAT directory
 
 
 
@@ -89,8 +106,8 @@ gradle test
 ### Implementation Notes:
 * I considered the 37 operators only in my implementation: =,>,<,!,~,?,->,==,>=,<=,!=,&&,||,++,--,+,-,\*,/,&,|,^,%,<<,>>,>>>,+=,-=,*=,/=,&=,|=,^=,%=,<<=,>>=,>>>=
 * I haven't tested for LambdaExpression as it is added in JLS8 API, and I am using JLS3
-* operator ":" captured in the switch and short version of for loop and if statements. 
-* negative numbers are counted as one operator "-" operator and a literal number operand. 
+* operator ":" captured in the switch and short version of for loop and if statements.
+* negative numbers are counted as one operator "-" operator and a literal number operand.
 * The program counts different parts of the import statements as operands.
 * In case of many java files exists in the directory. The overall number of the distinct operators in the whole application is the sum of the distinct number of operators in each file. So, if we have the same operator in two files, we will have two distinct operators in the whole application. The same for the operands because of different scopes.
 * In my implementation, I am checking if the parsed java code to the ASTparser has any syntax error or not. Sometime, with newer versions, the code return with a syntax error. At that case, The Calculate Halstead Complexity quits with an error.
